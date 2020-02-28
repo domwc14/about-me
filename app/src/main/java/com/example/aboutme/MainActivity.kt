@@ -8,46 +8,57 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import com.example.aboutme.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
+    private val myUser:MyName = MyName("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        findViewById<Button>(R.id.done_button).setOnClickListener { addNickname(it) }
-        findViewById<TextView>(R.id.nickname_text).setOnClickListener { addNickname(it) }
+        binding = DataBindingUtil.setContentView(this , R.layout.activity_main)
+        binding.myUser = myUser //binds the layout-> myName to line 18 here
+        binding.doneButton.setOnClickListener { submitForm() }
+        //binding.nicknameText.setOnClickListener { updateNickname() }
     }
 
-    private fun addNickname(view: View) {
-        val editText = findViewById<EditText>(R.id.nickname_edit)
-        val nicknameTextView: TextView = findViewById<TextView>(R.id.nickname_text)
-
-        nicknameTextView.text = editText.text
-
-        editText.visibility = View.GONE
-        view.visibility =View.GONE
-        nicknameTextView.visibility = View.VISIBLE
-
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-
-    }
-
-    private fun updateNickname(view: View){
-        val editText = findViewById<EditText>(R.id.nickname_edit)
-        val nicknameTextView: TextView = findViewById<TextView>(R.id.nickname_text)
-        editText.visibility = View.VISIBLE
-        view.visibility = View.GONE
-        done_button.visibility = View.VISIBLE
-        editText.requestFocus()
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(editText, 0)
-
-
-
-
-
+    private fun submitForm() {
+        binding.apply {
+            myUser?.name = binding.nameEdit.text.toString()
+            myUser?.nickname = binding.nicknameEdit.text.toString()
+            myUser?.age = binding.ageEdit.text.toString().toInt()
+            myUser?.birthday = binding.birthdayEdit.text.toString()
+            myUser?.number = binding.phoneEdit.text.toString()
+            myUser?.email = binding.emailEdit.text.toString()
+            myUser?.dream = binding.dreamEdit.text.toString()
+            myUser?.crush = binding.crushEdit.text.toString()
+            invalidateAll()         //para mag reflect yung pagbabago ng variable sa UI
+            binding.nicknameTextShown.visibility = View.VISIBLE
+            binding.nameTextShown.visibility = View.VISIBLE
+            binding.ageTextShown.visibility = View.VISIBLE
+            binding.bioScroll.visibility = View.GONE
+            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(binding.doneButton.windowToken, 0)
+        }
 
     }
+
+//    private fun updateNickname(){
+//
+//        binding.nicknameEdit.visibility = View.VISIBLE
+//        binding.doneButton.visibility = View.GONE
+//        done_button.visibility = View.VISIBLE
+//        binding.nicknameEdit.requestFocus()
+//        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        imm.showSoftInput(binding.nicknameText, 0)
+//
+//
+//
+//
+//
+//
+//    }
 }
